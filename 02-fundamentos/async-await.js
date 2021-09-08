@@ -31,19 +31,11 @@ const getEmpleado = (id) =>{
         (empleado) // alternativa al if
             ?resolve(empleado)
             :reject(`No existe el empleado con id ${id}`);
-
-        // if (empleado) {
-        //     resolve(empleado);
-        // }else{
-        //     reject(`No existe el empleado con id ${id}`)
-        // }
-
     });
 
     return promesa
 }
 
-//TAREA!
 const getSalario = (id) =>{
     const promesa = new Promise((resolve,reject)=>{
         const empleadoSalario = salarios.find((e) => e.id === id)?.salario; // ? es un null check , pregunta si la respuesta es distinta de undifiend, es decir si encontro alguno
@@ -58,30 +50,17 @@ const getSalario = (id) =>{
 
 const id = 3;
 
-// getEmpleado(id)
-//     .then(empleado => console.log(empleado))
-//     .catch(err => console.log(err));
+const getInfoUsuario = async(id) =>{            // async lo que hace en una funcion sea asincrona es decir,hace que esta retorne una promesa
+    try {
+        const empleado = await getEmpleado(id);     // await se usa para funciones asincronas, es decir que retornen una promesa
+        const salario = await getSalario(id);
+    
+        return `El empleado ${empleado} tiene un salario de ${salario}` 
+    } catch (error) {
+        throw error; // con el return error en caso de que uno de los 2 existe va entrar al then. con throw si hay algun error siempre pasa por catch
+    }
+}
 
-// getSalario(id)
-//     .then(salario => console.log(salario))
-//     .catch(err => console.log(err))
-
-// getEmpleado(id)                       PROMISE-HELL
-//     .then(empleado =>{
-//         getSalario(id)
-//             .then(salario =>console.log('El empleado:',empleado,'tiene un salario de',salario))
-//             .catch(err => console.log(err));
-//     })
-//     .catch(err => console.log(err));
-
-// DE MANERA QUE NO SEA PROMISE-HELL
-
-let nombre;
-
-getEmpleado(id)
-    .then(empleado =>{
-        nombre = empleado;
-        return getSalario(id)
-    })
-    .then(salario => console.log('El empleado:',nombre,'tiene un salario de',salario))
+getInfoUsuario(id)
+    .then(msg => console.log(msg))
     .catch(err => console.log(err));
