@@ -1,4 +1,5 @@
 const {Router} = require('express'); //metodo de express
+const { check } = require('express-validator');
 const { usuariosGet, usuariosPut, usuariosPost, usuariosDelete, usuariosPatch } = require('../controllers/usuarios');
 
 
@@ -11,7 +12,12 @@ router.get('/', usuariosGet);
 router.put('/:id', usuariosPut);
 
 // Crear nuevos recuros
-router.post('/', usuariosPost);
+// Los middleware se ejecutaran para validar antes que la peticion termine, si uno falla no se ejecuta
+//el segundo parametro es el middleware, varios []
+router.post('/',[
+    check('correo','El correo no es valido').isEmail() //usa la funcion cheak de express-validation para verificar que el campo correo del body sea correcto
+    //almacena el error en la req que se trabaja en el usuariosPost
+], usuariosPost);
 
 // Borrar algo, o que se elimina
 router.delete('/',usuariosDelete);

@@ -1,5 +1,8 @@
 const {response,request} = require('express')
+const bycryptjs = require('bcryptjs');
 
+const Usuario = require('../models/usuario');
+const { validationResult } = require('express-validator');
 
 //el =response es para que sepa que tipo de dato es, es decir, una respuesta
 // con req se puede hacer
@@ -17,14 +20,33 @@ const usuariosGet = (req=request,res=response) =>{
     });
 }
 
-usuariosPost = (req,res=response) =>{
+usuariosPost = async(req,res=response) =>{
 
-    const {nombre,edad} = req.body;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        return res.status(400).json(errors);
+    }
 
+    const {nombre,correo, password, rol} = req.body;
+    const usuario = new Usuario({ nombre, correo, password, rol});
+
+    //Verificar si el correo existe
+    const existeEmail = await Usuario.findOne({correo});
+    if(existeEmail){  // Distinto de null es decir existe
+        return res.status(400).json({ //Estado para que el front se de cuenta del error
+            msg: 'Ese correo ya esta registrado'
+        })
+    }
+
+    //Encriptar la contraseña, hash
+    const salt = bycryptjs.genSaltSync(); //Una sola via. Se establece un valor que es el numero de vueltas para mas seguridad default:10
+    usuario.password = bycryptjs.hashSync(password,salt) //Genera el hash del password
+
+    //Guardar en DB
+    await usuario.save();
     res.json({
         msg:"post API - controlador",
-        nombre,
-        edad
+        usuario
     })
 }
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const { dbConnection } = require('../database/config');
 
 class Server {
 
@@ -9,6 +10,9 @@ class Server {
         //endpoint de usuarios
         this.usuariosPath = '/api/usuarios';
 
+        //Conectar a base de datos
+        this.conectarDB();
+
         //Middlewares
         this.middlewares();
 
@@ -16,7 +20,11 @@ class Server {
         this.routes();
     }
 
-    middlewares(){ //los middlewares es son con el use
+    async conectarDB(){
+        await dbConnection();
+    }
+
+    middlewares(){ //los middlewares son funciones que se ejecutan antes de los controladoreso seguir con ejecucion de peticiones. con el use
         // CORS es un paquete que nos ayuda a proteger superficialmente nuestras aplicaciones.
         this.app.use(cors()); // Funciona como un middleware
 
