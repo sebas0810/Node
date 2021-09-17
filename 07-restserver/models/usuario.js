@@ -33,6 +33,12 @@ const UsuarioSchema = Schema({  //como va a ser el modelo de la coleccion dentro
     }
 });
 
-
+// Similar a sobre escribir el metodo toString, es la forma como se escribe un objeto
+UsuarioSchema.methods.toJSON = function () { 
+    const {__v,password,... usuario} = this.toObject();  //Nos va a devolver el objeto literal, {__v,password,... usuario} saca los atributos v y pass
+    // y los demas los deja como un objeto en usuario
+    return usuario;
+    
+}
 
 module.exports = model('Usuario',UsuarioSchema);  //DB le pone este nombre a la coleccion, por defecto mongosse le añade una s al final
