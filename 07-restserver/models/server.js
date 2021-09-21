@@ -9,6 +9,7 @@ class Server {
         this.port = process.env.PORT;
         //endpoint de usuarios
         this.usuariosPath = '/api/usuarios';
+        this.authPath = '/api/auth';
 
         //Conectar a base de datos
         this.conectarDB();
@@ -38,6 +39,7 @@ class Server {
 
     routes(){
         // cuando se vala a la ruta '/api/usuarios' va a usar las rutas definidas en '../routes/user'
+        this.app.use(this.authPath, require('../routes/auth'))
         this.app.use(this.usuariosPath, require('../routes/usuarios'))
     }
 
